@@ -9,9 +9,13 @@ def read_content(filename):
 
 def get_largest_sum(filename):
     '''
-    for one elf: read till an empty line comes
+    input:  the file contains numbers per line divided by an empty line
+    
+    for each elf read numbers till an empty line comes
     first convert to int then cummulate
     allways keep the higher number
+
+    output: the largetst sum of the numbers in one group
     '''
     content = read_content(filename)
     currentElf = 0
@@ -31,8 +35,11 @@ def get_largest_sum(filename):
 # task 2
 def get_top_three(filename):
     '''
-    get the number of calories for each elf
-    then sort and return the top three
+        input:  the file contains numbers per line divided by an empty line
+
+        collect the numbers (calories) for each elf in a list then sort
+
+        output: the top three number
     '''
     content = read_content(filename)
     currentElf = 0
@@ -50,6 +57,7 @@ def get_top_three(filename):
 
 
 if __name__ == "__main__":
+    # input is the advent01.txt"
     
     print(get_largest_sum("advent01.txt"))
 
