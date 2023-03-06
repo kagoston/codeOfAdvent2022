@@ -1,79 +1,95 @@
+import sys
 
-def get_final(filename, strategy = False):
-    '''
-    input: the strategy played
+def play_tournament(rounds, strategy=False):
+    """
+    input:
+    
+    rounds: two letters in each line as one round in the game
+                letters represents the shape chosen by the opponent
+                and the player 
+    strategy: whether to use the player input as an intended outcome
 
-    output: final score of playing Rock Paper Scissors
+    returns the total score for the whole game
+    """
+    
+    total_score = 0
+    for move in rounds:
+        shapes = move.split()
+        total_score += get_score2(shapes[0], shapes[1], strategy)
 
-    '''
-    with open(filename, "r") as f:
-        content = f.readlines()
+    print(total_score)
 
-    # The first column: the opponent's choice
-    # A for Rock,
-    # B for Paper,
-    # C for Scissors.
-    firstColumn = {"A" : 1, "B": 2, "C" : 3}
-
-    # second column: your choice if there is no strategy
-    # X for Rock,
-    # Y for Paper
-    # Z for Scissors.
-    secondColumn = {"X" : 1, "Y": 2, "Z" : 3}
-    scores = 0  
-    # Rock defeats Scissors, Scissors defeats Paper, and Paper defeats Rock
-    for line in content:
-        shapes = line.split()
-        opponentChoice = firstColumn[shapes[0]]
-        yourChoice = get_shape(opponentChoice, shapes[1]) if strategy else secondColumn[shapes[1]]
-        scores += get_score(yourChoice, opponentChoice)
-
-    return scores
-
-
-def get_score(yourShape, opponentShape):
-    '''
-    input: shapes chosen in a single round
+def get_score2(opponent_choice, player_choice, strategy):
+    """
+    Input:
+    opponent: A for Rock, B for Paper, and C for Scissors
+    player: X for Rock, Y for Paper, and Z for Scissors
     
     The score for a single round is the sum of the followings:
     score for the selected shape: 1 for Rock, 2 for Paper, and 3 for Scissors
     score for the outcome: 0 if you lost, 3 if the round was a draw, and 6 if you won
-
+    
     output: a score of a single round
-    '''
-    diff = yourShape - opponentShape
-    # lost
-    score = yourShape
+    """
+    
+    opponent = {"A" : 1, "B": 2, "C" : 3}
+    player = {"X" : 1, "Y": 2, "Z" : 3}
+
+    if strategy:
+        player_choice = use_strategy(opponent_choice, player_choice)
+        
+    player_score = player[player_choice]
+    opponent_score = opponent[opponent_choice]
+
+    # basic score for the shape
+    score = player_score
+
+    diff = player_score - opponent_score
+
     # draw
-    if opponentShape == yourShape:
+    if diff == 0:
         score += 3
     # win
     elif diff == 1 or diff == -2:
         score += 6
+
     return score           
 
 
-def get_shape(opponentShape, aim):
-    '''
-    input: the opponents shape and the aimed outcome
-    
-    output: your shape to choose
-    '''
-    # secret strategy:
-    # X means you need to lose,
-    if aim == "X":
-        result = (opponentShape  - 1) if opponentShape  > 1 else 3
-    # Y means you need to end the round in a draw,
-    elif aim == "Y":
-        result =  opponentShape
-    # Z means you need to win.
-    else:
-        result = 1 + opponentShape % 3
-    
-    return result
-    
+def use_strategy(opponent_choice, round_end):
+    """
+    X means you need to lose,
+    Y means you need to end the round in a draw,
+    Z means you need to win.
+    """
+
+    # use the letters ASCI code of A, B, C to get indices 0, 1, 2
+    # A is 65
+    player_shapes = ["X", "Y", "Z"]
+
+    # draw
+    response = player_shapes[ord(opponent_choice) - 65]
+
+    # loose
+    if round_end == "X":
+        response = player_shapes[ord(opponent_choice) - 66]
+
+    # win
+    elif round_end == "Z":
+        response = player_shapes[(ord(opponent_choice) - 64) % 3]
+        
+    return response
+
 
 if __name__ == "__main__":
-    print(get_final("advent02.txt"))
-
-    print(get_final("advent02.txt", True))
+    """
+    advent of code day 2
+    play rock-paper-scissors
+    """
+    filename = sys.argv[1]
+    # filename = "advent02.txt"
+    
+    with open(filename, "r") as f:
+        content = f.readlines()
+        play_tournament(content)
+        play_tournament(content, True)
