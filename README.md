@@ -1,2 +1,2 @@
 # codeOfAdvent2022
- solve the pyzzles on code of Advent
+ solve the puzzles on code of Advent
